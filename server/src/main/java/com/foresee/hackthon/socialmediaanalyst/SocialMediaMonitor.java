@@ -4,6 +4,7 @@ import com.foresee.hackthon.socialmediaanalyst.reddit.RedditMonitor;
 import com.foresee.hackthon.socialmediaanalyst.repository.SocialMediaCommentRepository;
 import com.foresee.hackthon.socialmediaanalyst.service.EngineService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
@@ -25,9 +26,12 @@ public class SocialMediaMonitor implements ApplicationRunner {
     @Autowired
     SocialMediaCommentRepository repository;
 
+    @Value( "${search.word}" )
+    private String searchWord;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        RedditMonitor.init("wework");
+        RedditMonitor.init(searchWord);
         taskExecutor.execute(new RedditMonitor(engineService, repository));
     }
 }

@@ -2,6 +2,7 @@ package com.foresee.hackthon.socialmediaanalyst.entity;
 
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +23,7 @@ public class SocialMediaComment {
 
     private String source;
 
+    @Column(length = 9000)
     private String text;
 
     private float rating;
