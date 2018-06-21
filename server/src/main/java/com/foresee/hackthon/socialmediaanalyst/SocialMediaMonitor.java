@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
@@ -15,23 +16,13 @@ import org.springframework.stereotype.Component;
 public class SocialMediaMonitor implements ApplicationRunner {
 
     @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
     private TaskExecutor taskExecutor;
 
     @Autowired
-    EngineService engineService;
-
-    @Autowired
-    SocialMediaCommentRepository repository;
-
-    @Value( "${search.word}" )
-    private String searchWord;
+    private RedditMonitor redditMonitor;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        RedditMonitor.init(searchWord);
-        taskExecutor.execute(new RedditMonitor(engineService, repository));
+        taskExecutor.execute(redditMonitor);
     }
 }

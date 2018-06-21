@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,14 +28,16 @@ public class RedditMonitor implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedditMonitor.class);
 
+    @Autowired
+    Environment environment;
+
+    @Autowired
     EngineService engineService;
 
+    @Autowired
     SocialMediaCommentRepository repository;
 
-    public RedditMonitor(final EngineService engineService, SocialMediaCommentRepository repository) {
-        this.engineService = engineService;
-        this.repository = repository;
-    }
+    String lastCommentId = null;
 
     @Override
     public void run() {
@@ -68,11 +71,9 @@ public class RedditMonitor implements Runnable {
         }
     }
 
-    static String searchTerm;
-    static String lastCommentId = null;
 
-    public static void init(final String newSearchTerm) {
-        searchTerm = newSearchTerm;
+
+    public static void init() {
         Unirest.setObjectMapper(new ObjectMapper() {
             private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper
                     = new com.fasterxml.jackson.databind.ObjectMapper();
@@ -104,10 +105,15 @@ public class RedditMonitor implements Runnable {
         return socialMediaComment;
     }
 
+    String searchWord() {
+        return environment.getProperty("search.word");
+    }
+
     public Optional<SocialMediaComment> getPost() throws UnirestException {
-        GetRequest request = Unirest.get("https://www.reddit.com/search.json?q={searchTerm}")
+        System.out.println(searchWord());
+        GetRequest request = Unirest.get("https://www.reddit.com/search.json?q={searchWord}")
                 .header("User-agent", "ForeSee Hackathon Social Media Sentiments 0.1")
-                .routeParam("searchTerm", searchTerm);
+                .routeParam("searchWord", searchWord());
         request.queryString("sort", "created");
         request.queryString("limit", 5);
         if (lastCommentId != null) {
