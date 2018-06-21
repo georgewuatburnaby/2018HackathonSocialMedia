@@ -67,11 +67,11 @@ public class RedditMonitor implements Runnable {
         GetRequest request = Unirest.get("https://www.reddit.com/search.json?q={searchTerm}")
                 .header("User-agent", "ForeSee Hackathon Social Media Sentiments 0.1")
                 .routeParam("searchTerm", searchTerm);
-
-        if (lastCommentId == null) {
+        request.queryString("sort", "created");
+        request.queryString("limit", 5);
+        if (lastCommentId != null) {
             request.queryString("before", lastCommentId);
         }
-        request.queryString("limit", 1);
 
         ListResponse listResponse = request.asObject(ListResponse.class).getBody();
         List<Comment> comments = listResponse.getData().getChildren();
@@ -92,6 +92,6 @@ public class RedditMonitor implements Runnable {
         final String title = listResponse.getData().getChildren().get(0).getData().getTitle();
 
 
-        return (selfText != null) ? selfText : title;
+        return title;
     }
 }
