@@ -1,5 +1,7 @@
 package com.foresee.hackthon.socialmediaanalyst.entity;
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,47 +11,22 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
+@Data
 public class SocialMediaComment {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long commentId;
 
-    private String comment;
+    private String url;
 
-    private float sentiment;
+    private String source;
 
-    private ArrayList<String> labels;
+    private String text;
 
-    public Long getCommentId() {
-        return commentId;
-    }
+    private float rating;
 
-    public void setCommentId(Long commentId) {
-        this.commentId = commentId;
-    }
+    private ArrayList<String> tags;
 
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public float getSentiment() {
-        return sentiment;
-    }
-
-    public void setSentiment(float sentiment) {
-        this.sentiment = sentiment;
-    }
-
-    public ArrayList<String> getLabels() {
-        return labels;
-    }
-
-    public void setLabels(ArrayList<String> labels) {
-        this.labels = labels;
-    }
+    private String timeStamp;
 }

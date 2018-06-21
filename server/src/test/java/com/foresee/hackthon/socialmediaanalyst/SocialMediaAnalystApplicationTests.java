@@ -20,13 +20,13 @@ public class SocialMediaAnalystApplicationTests {
 	@Test
 	public void initialData() {
 		SocialMediaComment comment = new SocialMediaComment();
-		comment.setComment("Test Comment, awesome");
-		comment.setSentiment(0.7f);
+		comment.setText("Test Comment, awesome");
+		comment.setRating(0.7f);
 
 		ArrayList<String> labels = new ArrayList<>();
 		labels.add("test");
 		labels.add("positive");
-		comment.setLabels(labels);
+		comment.setTags(labels);
 
 		repository.save(comment);
 
