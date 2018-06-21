@@ -132,7 +132,7 @@ private Object parentWhitelistStatus;
 @JsonProperty("hide_score")
 private Boolean hideScore;
 @JsonProperty("created")
-private Double created;
+private Long created;
 @JsonProperty("url")
 private String url;
 @JsonProperty("author_flair_text")
@@ -757,12 +757,12 @@ this.hideScore = hideScore;
 }
 
 @JsonProperty("created")
-public Double getCreated() {
+public Long getCreated() {
 return created;
 }
 
 @JsonProperty("created")
-public void setCreated(Double created) {
+public void setCreated(Long created) {
 this.created = created;
 }
 

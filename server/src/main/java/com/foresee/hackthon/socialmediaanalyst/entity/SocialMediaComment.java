@@ -30,5 +30,5 @@ public class SocialMediaComment {
 
     private ArrayList<String> tags;
 
-    private String timeStamp;
+    private long timeStamp;
 }

@@ -14,6 +14,7 @@ import com.mashape.unirest.request.GetRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,12 @@ public class RedditMonitor implements Runnable {
 
     String lastCommentId = null;
 
+    @Value("${reddit.monitor.rate}")
+    int pollRate;
+
+    @Value("${reddit.limit}")
+    int limit;
+
     @Override
     public void run() {
         while (true) {
@@ -60,7 +67,7 @@ public class RedditMonitor implements Runnable {
             }
             finally {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(pollRate);
                 }
                 catch (InterruptedException e) {
                     // should never happen
@@ -70,8 +77,6 @@ public class RedditMonitor implements Runnable {
             }
         }
     }
-
-
 
     public static void init() {
         Unirest.setObjectMapper(new ObjectMapper() {
@@ -101,7 +106,7 @@ public class RedditMonitor implements Runnable {
         socialMediaComment.setSource("Reddit");
         socialMediaComment.setUrl("https://www.reddit.com/" + redditComment.getPermalink());
         socialMediaComment.setText(redditComment.getTitle());
-        socialMediaComment.setTimeStamp(String.valueOf(redditComment.getCreated()));
+        socialMediaComment.setTimeStamp(redditComment.getCreated());
         return socialMediaComment;
     }
 
@@ -114,8 +119,8 @@ public class RedditMonitor implements Runnable {
         GetRequest request = Unirest.get("https://www.reddit.com/search.json?q={searchWord}")
                 .header("User-agent", "ForeSee Hackathon Social Media Sentiments 0.1")
                 .routeParam("searchWord", searchWord());
-        request.queryString("sort", "created");
-        request.queryString("limit", 5);
+        request.queryString("sort", "new");
+        request.queryString("limit", limit);
         if (lastCommentId != null) {
             request.queryString("before", lastCommentId);
         }
