@@ -122,17 +122,21 @@ public class RedditMonitor implements Runnable {
             return Optional.empty();
         }
 
+        // get earliest comment for demo purposes
+        final List<Comment> commentList = listResponse.getData().getChildren();
+        final CommentData redditComment = commentList.get(commentList.size()-1).getData();
+
         // check for same comment as last time
-        if (comments.get(0).getData().getName().equals(lastCommentId)) {
+        if (redditComment.getName().equals(lastCommentId)) {
             return Optional.empty();
         }
 
-        // have new comment
-        lastCommentId = comments.get(0).getData().getName();
+        // save last comment
+        lastCommentId = redditComment.getName();
 
         // body text, not used right now
         final String selfText = listResponse.getData().getChildren().get(0).getData().getSelftext();
-        final CommentData redditComment = listResponse.getData().getChildren().get(0).getData();
+
         return Optional.of(asSocialMediaComment(redditComment));
     }
 }
