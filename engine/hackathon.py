@@ -21,8 +21,7 @@ class NumpyEncoder(json.JSONEncoder):
         elif isinstance(obj,(np.ndarray,)): #### This is the fix
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
-    
-class HackathonResource(object):
+class AICore(object):
     def __init__(self):
         SHAPE=50    
         index_dict = dict()
@@ -75,7 +74,15 @@ class HackathonResource(object):
     def predict(self,text):
         evl = nltk.word_tokenize(self.clean_str(text.strip().lower()))
         evl = self.toModelData([evl],self.MAX_LEN)
-        return self.model.predict(evl)[0][0]     
+        return self.model.predict(evl)[0][0]\
+    
+    def predict_list(self, array):        
+        arr = []
+        for l in array:
+            arr.append(nltk.word_tokenize(self.clean_str(l.strip().lower())))
+        evl = self.toModelData(arr,self.MAX_LEN)
+        rst = self.model.predict(evl)
+        return rst.flatten()
         
     def toModelData(self,record,length):
         encoded_docs = []
@@ -109,21 +116,38 @@ class HackathonResource(object):
         string = re.sub(r"\?", " \? ", string)
         string = re.sub(r"\s{2,}", " ", string)
         return string.strip().lower()
+class SingleResource(object):
+    def __init__(self, core):
+        self.core = core
     
     def on_post(self, req, resp):
         """Handles GET requests"""
         resp.status = falcon.HTTP_200  # This is the default status
         text = req.stream.read().decode('utf-8') #req.get_param() #self.predict()
-        result = {'class': self.predict(text)}
+        result = {'rating': self.core.predict(text)}
         resp.body = json.dumps(result, cls=NumpyEncoder)
-
+        
+class MultiResource(SingleResource):
+    def on_post(self, req, resp):
+        """Handles GET requests"""
+        resp.status = falcon.HTTP_200  # This is the default status
+        text = req.stream.read().decode('utf-8') #req.get_param() #self.predict()
+        result = []
+        for i in self.core.predict_list(json.loads(text)):
+            result.append({'rating': i})
+        resp.body = json.dumps(result, cls=NumpyEncoder)
+        
 # # falcon.API instances are callable WSGI apps
 app = falcon.API()
 
+core = AICore()
 # Resources are represented by long-lived class instances
-things = HackathonResource()
+single_r = SingleResource(core)
+multi_r = MultiResource(core)
 
 # things will handle all requests to the '/things' URL path
-app.add_route('/hack', things)
+app.add_route('/hack', single_r)
+app.add_route('/hack_list', multi_r)
 # h = HackathonResource()
 # h.predict('good job')
+    
