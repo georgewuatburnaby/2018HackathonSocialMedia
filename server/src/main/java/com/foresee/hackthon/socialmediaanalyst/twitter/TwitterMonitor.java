@@ -102,9 +102,14 @@ public class TwitterMonitor implements Runnable {
     protected SocialMediaComment asSocialMediaComment(final Status twitterComment) {
         final SocialMediaComment socialMediaComment = new SocialMediaComment();
         socialMediaComment.setSource("Twitter");
-        socialMediaComment.setUrl("");
+
+        if (twitterComment.getURLEntities() != null &&
+                twitterComment.getURLEntities().length >= 1) {
+            socialMediaComment.setUrl(twitterComment.getURLEntities()[0].getExpandedURL());
+        }
+
         socialMediaComment.setText(twitterComment.getText());
-        socialMediaComment.setTimeStamp(twitterComment.getCreatedAt().getTime());
+        socialMediaComment.setTimeStamp(twitterComment.getCreatedAt().getTime() / 1000);
         return socialMediaComment;
     }
 
