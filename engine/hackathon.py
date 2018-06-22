@@ -134,7 +134,7 @@ class MultiResource(SingleResource):
         text = req.stream.read().decode('utf-8') #req.get_param() #self.predict()
         result = []
         for i in self.core.predict_list(json.loads(text)):
-            result.append({'rating': self.core.predict(text)})
+            result.append({'rating': i})
         resp.body = json.dumps(result, cls=NumpyEncoder)
         
 # # falcon.API instances are callable WSGI apps
