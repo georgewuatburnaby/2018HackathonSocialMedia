@@ -18,21 +18,66 @@
   </li>
 </ul>
 <h1>Hello, world!</h1> -->
+
 <h1>&nbsp;</h1>
 <div class="container">
+  <div class="container row">
+      <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">&nbsp;</span>
+          </div>
+          <input type="text" class="form-control" [(ngModel)]="searchTerm" (keyup.enter)="search()">
+        </div>
+        <div class="container row">
+          <div class="p-2" style="display: inline-block;">
+              <div class="input-group-prepend">
+                <div class="input-group-text bg-light text-dark">
+                    <input type="radio" name="radiogroupD" [checked]="filter_d == -100" (change)="filter_result(-100,'o')" /> All
+                </div>
+                <div class="input-group-text bg-danger text-white">
+                    <input type="radio" name="radiogroupD" [checked]="filter_d === -1" (change)="filter_result(-1,'o')" /> Negative
+                </div> 
+                <div class="input-group-text bg-secondary text-white">
+                    <input type="radio" name="radiogroupD" [checked]="filter_d === 0" (change)="filter_result(0,'o')" /> Neutral
+                </div> 
+                <div class="input-group-text bg-success text-white">
+                    <input type="radio" name="radiogroupD" [checked]="filter_d === 1" (change)="filter_result(1,'o')" /> Positive
+                </div>                                         
+              </div>              
+          </div>
+          <div class="ml-auto p-2" style="display: inline-block;">
+              <div class="input-group-prepend">
+                <div class="input-group-text bg-light text-dark">
+                    <input type="radio" name="radiogroupT" [checked]="filter_t === 'all'" (change)="filter_result(-200,'all')" /> All
+                </div>
+                <div class="input-group-text bg-warning text-white">
+                    <input type="radio" name="radiogroupT" [checked]="filter_t === 'Reddit'" (change)="filter_result(-200,'Reddit')" /> Reddit
+                </div> 
+                <div class="input-group-text bg-primary text-white">
+                    <input type="radio" name="radiogroupT" [checked]="filter_t === 'Twitter'" (change)="filter_result(-200,'Twitter')" /> Twitter
+                </div>       
+              </div>              
+          </div>          
+        </div>
+  </div>  
+  <hr />
   <div *ngFor="let item of data" class="card" style="margin-bottom: 10px">
-    <div class="card-title" [ngClass]="{'alert-success':(item.class==1),'alert-info':(item.class==0),'alert-danger':(item.class==-1)}">
+    <div class="card-title d-flex" [ngClass]="{'alert-success':(item.class==1),'alert-secondary':(item.class==0),'alert-danger':(item.class==-1)}">
         <!-- [ngClass]="(item.class==1)?'alert-info':'alert-warning'" -->
-      {{item.timeStamp | date:'yyyy-MM-dd hh:mm'}}
-      &nbsp;
-      {{item.rating | number:'1.1-2'}}
+      <div class="p-2">
+        {{item.timeStamp | date:'yyyy-MM-dd hh:mm'}}
+      </div>
+      <div class="ml-auto p-2">
+          {{item.rating | number:'1.1-2'}}
+      </div>
     </div>    
     <div class="card-body">
       <div class="row">
         <div class="col-2">
-            <a class="container" href="{{item.url}}" class="card-link" target="_blank">
-              <img *ngIf="item.source==='Twitter'" src="./assets/twitter.jpg" width="60"/>
-              <img *ngIf="item.source==='Reddit'" src="./assets/reddit.jpg"  width="60"/>
+            <!-- "{{item.url}} (click)="open(content,item.url)" -->
+            <a class="container card-link" target="_blank" href="{{item.url}}">
+              <img *ngIf="item.source==='Twitter'" src="./assets/twitter.jpg" width="40"/>
+              <img *ngIf="item.source==='Reddit'" src="./assets/reddit.jpg"  width="40"/>
             </a>
         </div>
         <div class="col-10">
