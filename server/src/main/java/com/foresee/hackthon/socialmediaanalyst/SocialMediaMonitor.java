@@ -21,8 +21,18 @@ public class SocialMediaMonitor implements ApplicationRunner {
     @Autowired
     private RedditMonitor redditMonitor;
 
+    @Value("${search.word}")
+    String searchWord;
+
+    @Value("${reddit.limit}")
+    int redditLimit;
+
+    @Value("${reddit.monitor.rate}")
+    int redditPollRate;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        RedditMonitor.setConfig(searchWord, redditLimit, redditPollRate);
         taskExecutor.execute(redditMonitor);
     }
 }

@@ -30,21 +30,25 @@ public class RedditMonitor implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedditMonitor.class);
 
     @Autowired
-    Environment environment;
-
-    @Autowired
     EngineService engineService;
 
     @Autowired
     SocialMediaCommentRepository repository;
 
-    String lastCommentId = null;
+    static String lastCommentId = null;
 
-    @Value("${reddit.monitor.rate}")
-    int pollRate;
+    static String searchWord;
 
-    @Value("${reddit.limit}")
-    int limit;
+    static int limit;
+
+    static int pollRate;
+
+    public static void setConfig(final String newSearchWord, final int newLimit, final int newPollRate) {
+        searchWord = newSearchWord;
+        limit = newLimit;
+        pollRate = newPollRate;
+        lastCommentId = null;
+    }
 
     @Override
     public void run() {
@@ -110,15 +114,11 @@ public class RedditMonitor implements Runnable {
         return socialMediaComment;
     }
 
-    String searchWord() {
-        return environment.getProperty("search.word");
-    }
-
     public Optional<SocialMediaComment> getPost() throws UnirestException {
-        System.out.println(searchWord());
+        System.out.println(searchWord);
         GetRequest request = Unirest.get("https://www.reddit.com/search.json?q={searchWord}")
                 .header("User-agent", "ForeSee Hackathon Social Media Sentiments 0.1")
-                .routeParam("searchWord", searchWord());
+                .routeParam("searchWord", searchWord);
         request.queryString("sort", "new");
         request.queryString("limit", limit);
         if (lastCommentId != null) {
