@@ -31,16 +31,20 @@ export class AppComponent {
   // }]
 
   constructor(private backService: BackService) { 
-    console.log(backService.get(null))
   }
   ngOnInit() {
     this.fetch()
-    // setInterval(()=> this.fetch(),5000)
+    setInterval(()=> this.fetch(),5000)
   }
 
   search(){
     if(this.searchTerm !== ''){
-      console.log('doing:', this.searchTerm.toLowerCase())
+      this.backService.change(this.searchTerm.toLowerCase()).subscribe(ob => {
+        console.log(ob)
+        this.raw_data = []
+        this.data = []
+      })
+      // console.log('doing:', )
     }
   }
 
@@ -57,20 +61,20 @@ export class AppComponent {
     }else{
       this.filter_t = t
     }
-    console.log(n,t)
+    // console.log(n,t)
     let tmp = this.raw_data.slice(0).filter(data => {
       // console.log(data.text,data.text.length,data.text.length>40,data.class,data.rating)
       return data.text.length>40
     })
-    console.log(tmp.length,typeof(n))
+    // console.log(tmp.length,typeof(n))
     if(n != -100){
       tmp = tmp.filter(data => data.class === n)
     }
     if(t !='all'){
       tmp = tmp.filter(data => data.source == t)
     }
-    console.log(tmp.length,this.filter_d,this.filter_t)
-    this.data = tmp.sort((o1, o2) => o1.timeStamp.getSeconds() - o2.timeStamp.getSeconds())
+    // console.log(tmp.length,this.filter_d,this.filter_t)
+    this.data = tmp.sort((o1, o2) => o2.timeStamp.getTime() - o1.timeStamp.getTime())
   }
 
   private fetch():void{
@@ -101,8 +105,7 @@ export class AppComponent {
     }catch(e){
 
     }
-  }
- 
+  } 
 }
 
 export interface HModel{

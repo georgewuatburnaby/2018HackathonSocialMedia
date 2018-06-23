@@ -12,4 +12,7 @@ export class BackService {
     let x = this.http.get('/comments?sort=commentId,desc')
     return x
   }
+  change(q:string): Observable<Object> {
+    return this.http.get('/config?search=' + q,{responseType:'text'})
+  }  
 }
